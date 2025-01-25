@@ -85,6 +85,11 @@ export default defineComponent({
       // Here you can handle the login logic, for example, authentication with an API.
       console.log('Login successful for:', this.form.email);
 
+      this.$api.get("/login")
+      .then((res)=>{
+        console.log(res.data.message)
+      })
+
       // Clear the form after successful login (or you could navigate to a new page)
       this.form.email = '';
       this.form.password = '';
