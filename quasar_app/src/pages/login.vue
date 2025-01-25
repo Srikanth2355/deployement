@@ -55,6 +55,9 @@
 
 <script>
 import { defineComponent,ref } from 'vue';
+import { useUserStore } from '../stores/user_store';
+
+const userstore = useUserStore();
 
 export default defineComponent({
   name: 'LoginPage',
@@ -63,7 +66,9 @@ export default defineComponent({
         form:ref({
             email:'',
             password:''
-        })
+        }),
+      userstore: userstore,
+
     }
   },
   computed: {
@@ -84,15 +89,29 @@ export default defineComponent({
     handleLogin() {
       // Here you can handle the login logic, for example, authentication with an API.
       console.log('Login successful for:', this.form.email);
+      this.$q.loading.show()
 
-      this.$api.get("/login")
+      this.$api.post('/login', this.form)
       .then((res)=>{
-        console.log(res.data.message)
+        if(res.data.ok){
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'positive',
+            message: 'Login successful'
+          })  
+          this.userstore.setSession(res.data.user)
+          this.$router.push('/')
+        }
       })
 
-      // Clear the form after successful login (or you could navigate to a new page)
-      this.form.email = '';
-      this.form.password = '';
+      .catch((err)=>{
+        this.$q.loading.hide()
+        this.$q.notify({
+          color: 'negative',
+          message: err.message
+        })
+
+      })
     },
   },
 });
