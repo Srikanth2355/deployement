@@ -18,7 +18,6 @@ api.interceptors.response.use((response) => {
   return response
 }, (error) => {
   if (error.response.status === 401) {
-    console.lof("i am executed")
     const useStore = useUserStore();
     useStore.clearSession()
     router.push('/login')
