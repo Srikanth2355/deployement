@@ -1,5 +1,7 @@
 import { defineBoot } from '#q-app/wrappers'
 import axios from 'axios'
+import { useUserStore } from "../stores/user_store.js"
+import { useRouter } from 'vue-router'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -10,6 +12,19 @@ import axios from 'axios'
 const api = axios.create({ baseURL: '/api', withCredentials: true, headers: {
   'Content-Type': 'application/json',
 } })
+
+
+api.interceptors.response.use((response) => {
+  return response
+}, (error) => {
+  if (error.response.status === 401) {
+    const useStore = useUserStore();
+    useStore.clearSession()
+    router.push('/login')
+    
+  }
+  return Promise.reject(error)
+})
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

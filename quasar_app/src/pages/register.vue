@@ -105,8 +105,28 @@ export default defineComponent({
     },
     methods: {
         handleRegister(){
-            console.log(this.form,'-----')
+            this.$q.loading.show()
+            
+              this.$api.post('/register', this.form)
+              .then((res)=>{
+                if(res.data.ok){
+                  this.$q.loading.hide()
+                  this.$q.notify({
+                    color: 'positive',
+                    message: 'Registration successful'
+                  })
+                  this.$router.push('/login')
+                }
+              })
 
+            .catch((err)=>{
+              this.$q.loading.hide()
+              this.$q.notify({
+                color: 'negative',
+                message: err.message
+              })
+
+            })
         }
     }
 })
