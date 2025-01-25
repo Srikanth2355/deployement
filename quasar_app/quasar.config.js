@@ -70,7 +70,17 @@ export default defineConfig((ctx) => {
       server: {
         type: 'http'
       },
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically,
+      proxy: [
+        {
+          context: ['/api'], // The path you want to proxy
+          target: 'http://localhost:5000', // Your backend API URL
+          changeOrigin: true,
+          secure: false, // Set to false if your API is running without https
+          
+        }
+      ]
+
     },
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-file#framework
